@@ -1,2 +1,2 @@
-# FEC-NiDUC
+# FEC-NiDSC
 Forward Error Correction - analiza 
