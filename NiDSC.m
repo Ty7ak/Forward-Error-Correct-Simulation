@@ -1,6 +1,6 @@
 %%%GENERATOR%%%
 
-n_bits = 10000;
+n_bits = 5000;
 rows = 1;
 init_bits = randi([0 1], rows, n_bits);
 
@@ -26,9 +26,9 @@ bch_encoded = bchenc(msgTx, n, k);
 
 % uncomment if using Gilbert channel and BCH %
 %
-m = 1;
+mm = 1;
 prim_poly = 3;
-bch_bits = gf2dec(bch_encoded, m, prim_poly);
+bch_bits = gf2dec(bch_encoded, mm, prim_poly);
 bch_encoded = bch_bits;
 %}
 
@@ -54,7 +54,7 @@ probability = 0.1;
 
 goodtobad = 0.004;
 badtogood = 0.2;
-errorwhengood = 0.02;
+errorwhengood = 0.5;
 errorwhenbad = 0.9;
 ndata = [];
 good_state = true;
@@ -102,9 +102,8 @@ end
 
 %for bch after Gilbert channel
 % uncomment if using Gilbert channel and BCH %
+
 %
-m = 4;
-n = 2^m - 1;
 bch_bits_mtrx = reshape(ndata, [], n);
 ndata = gf(bch_bits_mtrx);
 %}
@@ -137,7 +136,7 @@ for bit = ndata
     end
 end
 triple_bits_BER = biterr(init_bits, decoded_data)/n_bits
-
+triple_bits_redundancy = numel(triple_bits_encoded)/numel(init_bits)
 %}
 
 %%%hamming decoding%%%
@@ -147,6 +146,7 @@ triple_bits_BER = biterr(init_bits, decoded_data)/n_bits
 %{
 hamming_decoded = decode(ndata, 7, 4, 'hamming/binary');
 hamming_BER = biterr(init_bits, hamming_decoded)/n_bits
+hamming_redundancy = numel(hamming_encoded)/numel(init_bits)
 %}  
 
 %%%bch decoding%%%
@@ -155,10 +155,9 @@ hamming_BER = biterr(init_bits, hamming_decoded)/n_bits
 
 %
 bch_decoded = bchdec(ndata, n, k);
-m = 1;
-prim_poly = 3;
-bch_bits = gf2dec(bch_decoded, m, prim_poly);
+bch_bits = gf2dec(bch_decoded, mm, prim_poly);
 bch_BER = biterr(bch_bits, init_bits)/n_bits
+bch_redundancy = numel(bch_encoded)/numel(init_bits)
 %}
 
 %%%%%%%%%%%%%%%%%%%%%%%%
