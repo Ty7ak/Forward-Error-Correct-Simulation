@@ -30,11 +30,36 @@ m = 1;
 prim_poly = 3;
 bch_bits = gf2dec(bch_encoded, m, prim_poly);
 
-%disp(triple_bits);
-%disp(init_bits);
-%disp(hamm_bits_mtrx);
-%disp(hamm_bits_vec);
-%disp(bch_encoded);
+%choosing what coding we want to use to transport bits
+%data = bch_bits;
+%data = hamm_bits_vec;
+data = triple_bits;
+
+%bsc channel
+probability = 0.3;
+ndata = bsc(data, probability);
+
+%decoding triple bits
+zeros = 0;
+ones = 0;
+decoded_data = [];
+for bit = ndata
+    if bit == 0
+        zeros = zeros + 1;
+    else 
+        ones = ones +1;
+    end
+    if zeros + ones == 3
+        if zeros > ones
+            decoded_data = [decoded_data, 0]; %#ok<*AGROW>
+        else
+            decoded_data = [decoded_data, 1];
+        end
+        zeros = 0;
+        ones = 0;
+    end
+end
+[number, ratio] = biterr(init_bits, decoded_data);
 
 subplot(2, 2, 1);
 plot(init_bits);
