@@ -31,11 +31,30 @@ data = triple_bits_encoded;
 probability = 0.1;
 %ndata = bsc(data, probability);
 
+%getting bch bits for array representation (Gilbert channel)
+%{
+m = 1;
+prim_poly = 3;
+bch_bits = gf2dec(bch_encoded, m, prim_poly);
+bch_encoded = bch_bits;
+%}
+
+%%%CHANNELS%%%
+
+%choosing what coding we want to use to transport bits
+%data = bch_encoded;
+%data = hamming_encoded;
+%data = triple_bits_encoded;
+
+%bsc channel
+probability = 0.1;
+%ndata = bsc(data, probability);
+
 %Gilbert model%
 
 goodtobad = 0.004;
 badtogood = 0.2;
-errorwhengood = 0.00005;
+errorwhengood = 0.5;
 errorwhenbad = 0.9;
 ndata = [];
 good_state = true;
@@ -80,6 +99,14 @@ for bit = data
         end 
     end 
 end
+
+%for bch after Gilbert channel
+%{
+m = 4;
+n = 2^m - 1;
+bch_bits_mtrx = reshape(ndata, [], n);
+ndata = gf(bch_bits_mtrx);
+%}
 
 %%%DECODING%%%%
 
