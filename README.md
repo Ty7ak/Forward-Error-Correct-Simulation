@@ -1,4 +1,5 @@
-# FEC-NiDSC
+# FEC-NiDSC #
+# Aliaksei Tokarau, Maciej Tylak #
 Forward Error Correction - symulacja i analiza 
 
 Obsługa programu:
