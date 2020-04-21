@@ -22,39 +22,39 @@ bch_encoded = bchenc(msgTx, n, k);
 
 %%%CHANNELS%%%
 
-%choosing what coding we want to use to transport bits
-%data = bch_encoded;
-%data = hamming_encoded;
-data = triple_bits_encoded;
-
-%bsc channel
-probability = 0.1;
-%ndata = bsc(data, probability);
-
 %getting bch bits for array representation (Gilbert channel)
-%{
+
+% uncomment if using Gilbert channel and BCH %
+%
 m = 1;
 prim_poly = 3;
 bch_bits = gf2dec(bch_encoded, m, prim_poly);
 bch_encoded = bch_bits;
 %}
 
-%%%CHANNELS%%%
-
 %choosing what coding we want to use to transport bits
-%data = bch_encoded;
+data = bch_encoded;
 %data = hamming_encoded;
 %data = triple_bits_encoded;
 
-%bsc channel
+%BSC
+
+%{
+
+% uncomment if using BSC %
+
 probability = 0.1;
 %ndata = bsc(data, probability);
 
+%}
+
 %Gilbert model%
+
+% uncomment if using Gilbert channel %
 
 goodtobad = 0.004;
 badtogood = 0.2;
-errorwhengood = 0.5;
+errorwhengood = 0.02;
 errorwhenbad = 0.9;
 ndata = [];
 good_state = true;
@@ -101,7 +101,8 @@ for bit = data
 end
 
 %for bch after Gilbert channel
-%{
+% uncomment if using Gilbert channel and BCH %
+%
 m = 4;
 n = 2^m - 1;
 bch_bits_mtrx = reshape(ndata, [], n);
@@ -112,7 +113,9 @@ ndata = gf(bch_bits_mtrx);
 
 %%%triple bits decoding%%%
 
-%
+% uncomment if using triple bits (any channel) %
+
+%{
 
 zeros = 0;
 ones = 0;
@@ -139,6 +142,8 @@ triple_bits_BER = biterr(init_bits, decoded_data)/n_bits
 
 %%%hamming decoding%%%
 
+% uncomment if using hamming(7,4)(any channel) %
+
 %{
 hamming_decoded = decode(ndata, 7, 4, 'hamming/binary');
 hamming_BER = biterr(init_bits, hamming_decoded)/n_bits
@@ -146,7 +151,9 @@ hamming_BER = biterr(init_bits, hamming_decoded)/n_bits
 
 %%%bch decoding%%%
 
-%{
+% uncomment if using bch (any channel) %
+
+%
 bch_decoded = bchdec(ndata, n, k);
 m = 1;
 prim_poly = 3;
