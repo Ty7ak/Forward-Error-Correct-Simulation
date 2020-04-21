@@ -23,21 +23,69 @@ bch_encoded = bchenc(msgTx, n, k);
 %%%CHANNELS%%%
 
 %choosing what coding we want to use to transport bits
-data = bch_encoded;
+%data = bch_encoded;
 %data = hamming_encoded;
-%data = triple_bits_encoded;
+data = triple_bits_encoded;
 
 %bsc channel
 probability = 0.1;
-ndata = bsc(data, probability);
+%ndata = bsc(data, probability);
 
 %Gilbert model%
+
+goodtobad = 0.004;
+badtogood = 0.2;
+errorwhengood = 0.00005;
+errorwhenbad = 0.9;
+ndata = [];
+good_state = true;
+
+for bit = data
+    if good_state
+        if rand() < errorwhengood
+            if bit == 0
+                ndata = [ndata, 1];
+            else
+                ndata = [ndata, 0];
+            end
+        else
+            if bit == 0
+                ndata = [ndata, 0];
+            else   
+                ndata = [ndata, 1];
+            end
+        end
+        
+        if rand() < goodtobad
+            good_state = false;
+        end
+        
+    else 
+        if rand() < errorwhenbad
+            if bit == 0
+                ndata = [ndata, 1];
+            else
+                ndata = [ndata, 0];
+            end
+        else
+            if bit == 0
+                ndata = [ndata, 0];
+            else   
+                ndata = [ndata, 1];
+            end
+        end
+        
+        if rand() < badtogood
+            good_state = true;
+        end 
+    end 
+end
 
 %%%DECODING%%%%
 
 %%%triple bits decoding%%%
 
-%{
+%
 
 zeros = 0;
 ones = 0;
@@ -71,7 +119,7 @@ hamming_BER = biterr(init_bits, hamming_decoded)/n_bits
 
 %%%bch decoding%%%
 
-%
+%{
 bch_decoded = bchdec(ndata, n, k);
 m = 1;
 prim_poly = 3;
